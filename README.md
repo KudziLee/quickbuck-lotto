@@ -1,3 +1,5 @@
+---
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -31,13 +33,13 @@
       let nums = [
         +document.getElementById('num1').value,
         +document.getElementById('num2').value,
-        +document.getElementById('num3').value,+document.getElementById('num4').value,
+        +document.getElementById('num3').value,
+        +document.getElementById('num4').value,
         +document.getElementById('num5').value,
         +document.getElementById('num6').value
       ];
 
-      let unique = [...new Set(nums)];
-      if (nums.includes(0) || nums.length !== 6 || unique.length !== 6) {
+      let unique = [...new Set(nums)];if (nums.includes(0) || nums.length !== 6 || unique.length !== 6) {
         alert("Enter 6 unique numbers between 1 and 49");
         return;
       }
@@ -57,3 +59,5 @@
 </body>
 </html>
 ```
+
+---
