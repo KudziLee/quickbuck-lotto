@@ -1,4 +1,3 @@
-
 ```html
 <!DOCTYPE html>
 <html>
@@ -14,14 +13,20 @@
     }
     h1 {
       color: #2e7d32;
-    }
-    .logo {
-      width: 100%;
+      font-weight: 900;
+      font-size: 36px;
       text-align: center;
       margin-bottom: 10px;
     }
-    .logo img {
-      width: 150px;
+    .logo {
+      text-align: center;
+      font-size: 40px;
+      font-weight: 900;
+      color: #4caf50;
+      text-shadow: 1px 1px 2px #b28900;
+      margin-bottom: 20px;
+      letter-spacing: 3px;
+      user-select: none;
     }
     input, button {
       padding: 10px;
@@ -29,8 +34,7 @@
       width: 100%;
       box-sizing: border-box;
       border: 1px solid #ccc;
-      border-radius: 4px;
-    }
+      border-radius: 4px;}
     .number-inputs input {
       width: 60px;
       display: inline-block;
@@ -56,14 +60,14 @@
     #result {
       font-weight: bold;
       margin-top: 15px;
+      white-space: pre-line;
     }
   </style>
 </head>
-<body><div class="logo">
-    <img src="https://via.placeholder.com/150x50.png?text=QuickBuck+Lotto" alt="QuickBuck Lotto Logo">
-  </div>
+<body>
+  <div class="logo">QuickBuck Lotto</div>
 
-  <h1>QuickBuck Lotto</h1>
+  <h1>Welcome to QuickBuck Lotto</h1>
 
   <label>Enter your name:</label>
   <input type="text" id="playerName" placeholder="e.g. Tinashe" />
@@ -79,9 +83,7 @@
   </div>
 
   <button onclick="checkLotto()">Submit Ticket</button>
-  <button onclick="resetForm()">Reset</button>
-
-  <div id="result"></div>
+  <button onclick="resetForm()">Reset</button><div id="result"></div>
 
   <div id="history">
     <h3>Ticket History</h3>
@@ -100,7 +102,8 @@
     }
 
     function checkLotto() {
-      const name = document.getElementById("playerName").value.trim();if (name === "") {
+      const name = document.getElementById("playerName").value.trim();
+      if (name === "") {
         alert("Please enter your name.");
         return;
       }
@@ -124,12 +127,11 @@
       while (winning.length < 6) {
         let n = Math.floor(Math.random() * 49) + 1;
         if (!winning.includes(n)) winning.push(n);
-      }
-
-      const matches = nums.filter(n => winning.includes(n)).length;
+      }const matches = nums.filter(n => winning.includes(n)).length;
       const prize = getPrize(matches);
 
-      const resultText = `name, you matched{matches} number(s). prize numbers:{winning.join(", ")}`;
+      const resultText = `name, you matched{matches} number(s). prize
+Winning numbers:{winning.join(", ")}`;
       document.getElementById("result").innerText = resultText;
 
       const ticket = {
@@ -143,7 +145,8 @@
       updateHistory();
     }
 
-    function updateHistory() {const container = document.getElementById("ticketList");
+    function updateHistory() {
+      const container = document.getElementById("ticketList");
       container.innerHTML = "";
       history.forEach(t => {
         const div = document.createElement("div");
@@ -169,4 +172,58 @@
   </script>
 </body>
 </html>
+```
+
+*server.js* (Node.js + Express)
+
+“`js
+const express = require('express');
+const fs = require('fs');
+const cors = require('cors');
+const app = express();
+const PORT = 3000;
+
+app.use(cors());
+app.use(express.json());
+
+const TICKETS_FILE = './tickets.json';
+
+// Load tickets from file or start empty
+let tickets = [];
+if (fs.existsSync(TICKETS_FILE)) 
+  tickets = JSON.parse(fs.readFileSync(TICKETS_FILE));
+
+
+// Save tickets to file
+function saveTickets() 
+  fs.writeFileSync(TICKETS_FILE, JSON.stringify(tickets, null, 2));
+
+
+// Get all tickets
+app.get('/tickets', (req, res) => 
+  res.json(tickets);
+);
+
+// Add new ticket
+app.post('/tickets', (req, res) => 
+  const  name, picks, win, matched, prize  = req.body;
+  if (!name || !picks || !win || matched === undefined || !prize) 
+    return res.status(400).json( error: "Missing fields" );
+  
+  tickets.unshift( name, picks, win, matched, prize, id: Date.now() );
+  saveTickets();
+  res.json( message: "Ticket saved" );
+);
+
+app.listen(PORT, () => 
+  console.log(`Server running on http://localhost:{PORT}`);
+});
+```
+
+---
+
+Step 3: `tickets.json` (start empty)
+
+```json
+[]
 ```
