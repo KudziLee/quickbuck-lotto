@@ -1,3 +1,4 @@
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -7,19 +8,39 @@
     body {
       font-family: Arial;
       margin: 20px;
+      background-color: #f3f9f1;
+      color: #333;
       max-width: 500px;
-      line-height: 1.6;
+    }
+    h1 {
+      color: #2e7d32;
+    }
+    .logo {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .logo img {
+      width: 150px;
     }
     input, button {
-      padding: 8px;
+      padding: 10px;
       margin: 5px 0;
       width: 100%;
       box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
     }
     .number-inputs input {
       width: 60px;
       display: inline-block;
       margin-right: 5px;
+    }
+    button {
+      background-color: #388e3c;
+      color: white;
+      font-weight: bold;
+      border: none;
     }
     #history {
       margin-top: 20px;
@@ -27,13 +48,21 @@
       padding-top: 10px;
     }
     .ticket {
-      background: #f2f2f2;
+      background: #e8f5e9;
       padding: 10px;
       margin-bottom: 10px;
+      border-left: 5px solid #4caf50;
+    }
+    #result {
+      font-weight: bold;
+      margin-top: 15px;
     }
   </style>
 </head>
-<body>
+<body><div class="logo">
+    <img src="https://via.placeholder.com/150x50.png?text=QuickBuck+Lotto" alt="QuickBuck Lotto Logo">
+  </div>
+
   <h1>QuickBuck Lotto</h1>
 
   <label>Enter your name:</label>
@@ -44,7 +73,8 @@
     <input type="number" id="num1" min="1" max="49">
     <input type="number" id="num2" min="1" max="49">
     <input type="number" id="num3" min="1" max="49">
-    <input type="number" id="num4" min="1" max="49"><input type="number" id="num5" min="1" max="49">
+    <input type="number" id="num4" min="1" max="49">
+    <input type="number" id="num5" min="1" max="49">
     <input type="number" id="num6" min="1" max="49">
   </div>
 
@@ -61,9 +91,16 @@
   <script>
     let history = [];
 
+    function getPrize(matches) {
+      if (matches === 6) return "JACKPOT! You won 100,000!";
+      if (matches === 5) return "You won500!";
+      if (matches === 4) return "You won 50!";
+      if (matches === 3) return "You won5!";
+      return "No prize this time.";
+    }
+
     function checkLotto() {
-      const name = document.getElementById("playerName").value.trim();
-      if (name === "") {
+      const name = document.getElementById("playerName").value.trim();if (name === "") {
         alert("Please enter your name.");
         return;
       }
@@ -89,30 +126,34 @@
         if (!winning.includes(n)) winning.push(n);
       }
 
-      const matches = nums.filter(n => winning.includes(n)).length;const resultText = `name, you matched{matches} number(s). Winning numbers: winning.join(", ")`;
+      const matches = nums.filter(n => winning.includes(n)).length;
+      const prize = getPrize(matches);
+
+      const resultText = `name, you matched{matches} number(s). prize numbers:{winning.join(", ")}`;
       document.getElementById("result").innerText = resultText;
 
-      const ticket = 
+      const ticket = {
         name,
         picks: nums,
         win: winning,
-        matched: matches
-      ;
+        matched: matches,
+        prize
+      };
       history.unshift(ticket);
       updateHistory();
-    
+    }
 
-    function updateHistory() 
-      const container = document.getElementById("ticketList");
+    function updateHistory() {const container = document.getElementById("ticketList");
       container.innerHTML = "";
-      history.forEach(t => 
+      history.forEach(t => {
         const div = document.createElement("div");
         div.className = "ticket";
         div.innerHTML = `
-          <strong>{t.name}</strong><br>
-          Your picks: t.picks.join(", ")<br>
-          Winning:{t.win.join(", ")}<br>
-          Matched: ${t.matched}
+          <strong>t.name</strong><br>
+          Your picks:{t.picks.join(", ")}<br>
+          Winning: t.win.join(", ")<br>
+          Matched:{t.matched}<br>
+          Prize: ${t.prize}
         `;
         container.appendChild(div);
       });
